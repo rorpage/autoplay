@@ -43,6 +43,14 @@ header {
   gap: 14px;
 }
 
+.app-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--toggled);
+}
+
 h1 {
   font-size: 1.25rem;
   font-weight: 700;

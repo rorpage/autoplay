@@ -1,7 +1,7 @@
 {
-  "name": "50 States Tracker",
-  "short_name": "States",
-  "description": "Track which US states you've visited",
+  "name": "AutoPlay",
+  "short_name": "AutoPlay",
+  "description": "A collection of simple browser-based games and trackers",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a2e",
