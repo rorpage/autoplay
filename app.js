@@ -1,57 +1,105 @@
 const STATES = [
-  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
-  'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
-  'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa',
-  'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland',
-  'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri',
-  'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey',
-  'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio',
-  'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina',
-  'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+  { abbr: 'AL', name: 'Alabama' },      { abbr: 'AK', name: 'Alaska' },
+  { abbr: 'AZ', name: 'Arizona' },      { abbr: 'AR', name: 'Arkansas' },
+  { abbr: 'CA', name: 'California' },   { abbr: 'CO', name: 'Colorado' },
+  { abbr: 'CT', name: 'Connecticut' },  { abbr: 'DE', name: 'Delaware' },
+  { abbr: 'FL', name: 'Florida' },      { abbr: 'GA', name: 'Georgia' },
+  { abbr: 'HI', name: 'Hawaii' },       { abbr: 'ID', name: 'Idaho' },
+  { abbr: 'IL', name: 'Illinois' },     { abbr: 'IN', name: 'Indiana' },
+  { abbr: 'IA', name: 'Iowa' },         { abbr: 'KS', name: 'Kansas' },
+  { abbr: 'KY', name: 'Kentucky' },     { abbr: 'LA', name: 'Louisiana' },
+  { abbr: 'ME', name: 'Maine' },        { abbr: 'MD', name: 'Maryland' },
+  { abbr: 'MA', name: 'Massachusetts' },{ abbr: 'MI', name: 'Michigan' },
+  { abbr: 'MN', name: 'Minnesota' },    { abbr: 'MS', name: 'Mississippi' },
+  { abbr: 'MO', name: 'Missouri' },     { abbr: 'MT', name: 'Montana' },
+  { abbr: 'NE', name: 'Nebraska' },     { abbr: 'NV', name: 'Nevada' },
+  { abbr: 'NH', name: 'New Hampshire' },{ abbr: 'NJ', name: 'New Jersey' },
+  { abbr: 'NM', name: 'New Mexico' },   { abbr: 'NY', name: 'New York' },
+  { abbr: 'NC', name: 'North Carolina' },{ abbr: 'ND', name: 'North Dakota' },
+  { abbr: 'OH', name: 'Ohio' },         { abbr: 'OK', name: 'Oklahoma' },
+  { abbr: 'OR', name: 'Oregon' },       { abbr: 'PA', name: 'Pennsylvania' },
+  { abbr: 'RI', name: 'Rhode Island' }, { abbr: 'SC', name: 'South Carolina' },
+  { abbr: 'SD', name: 'South Dakota' }, { abbr: 'TN', name: 'Tennessee' },
+  { abbr: 'TX', name: 'Texas' },        { abbr: 'UT', name: 'Utah' },
+  { abbr: 'VT', name: 'Vermont' },      { abbr: 'VA', name: 'Virginia' },
+  { abbr: 'WA', name: 'Washington' },   { abbr: 'WV', name: 'West Virginia' },
+  { abbr: 'WI', name: 'Wisconsin' },    { abbr: 'WY', name: 'Wyoming' }
 ];
 
-const STORAGE_KEY = 'states-tracker-toggled';
+const PLATES_KEY = 'license-plate-toggled';
+const THEME_KEY  = 'autoplay-theme';
+const TOTAL      = STATES.length;
 
-// Load persisted state
+// ── Persistence ──────────────────────────────────────────────────────────────
+
 function loadToggled() {
   try {
-    return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)) || []);
+    return new Set(JSON.parse(localStorage.getItem(PLATES_KEY)) || []);
   } catch {
     return new Set();
   }
 }
 
 function saveToggled(set) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+  localStorage.setItem(PLATES_KEY, JSON.stringify([...set]));
 }
 
-// State
+// ── Theme ─────────────────────────────────────────────────────────────────────
+
+function getInitialTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved) return saved;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme === 'dark' ? 'dark' : '';
+  themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  localStorage.setItem(THEME_KEY, theme);
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+
 const toggled = loadToggled();
 
-// DOM refs
-const grid = document.getElementById('grid');
-const counter = document.getElementById('counter');
-const resetBtn = document.getElementById('reset-btn');
-const overlay = document.getElementById('modal-overlay');
-const modalCancel = document.getElementById('modal-cancel');
-const modalConfirm = document.getElementById('modal-confirm');
+// ── DOM refs ──────────────────────────────────────────────────────────────────
 
-// Build grid
-STATES.forEach(state => {
+const grid        = document.getElementById('grid');
+const counter     = document.getElementById('counter');
+const percent     = document.getElementById('percent');
+const resetBtn    = document.getElementById('reset-btn');
+const themeBtn    = document.getElementById('theme-btn');
+const overlay     = document.getElementById('modal-overlay');
+const modalCancel = document.getElementById('modal-cancel');
+const modalConfirm= document.getElementById('modal-confirm');
+
+// ── Build grid ────────────────────────────────────────────────────────────────
+
+STATES.forEach(({ abbr, name }) => {
   const btn = document.createElement('button');
-  btn.className = 'state-btn' + (toggled.has(state) ? ' toggled' : '');
-  btn.textContent = state;
-  btn.dataset.state = state;
-  btn.setAttribute('aria-pressed', toggled.has(state).toString());
+  btn.className = 'state-btn' + (toggled.has(abbr) ? ' toggled' : '');
+  btn.setAttribute('aria-pressed', toggled.has(abbr).toString());
+  btn.setAttribute('aria-label', name);
+
+  const abbrEl = document.createElement('span');
+  abbrEl.className = 'state-abbr';
+  abbrEl.textContent = abbr;
+
+  const nameEl = document.createElement('span');
+  nameEl.className = 'state-name';
+  nameEl.textContent = name;
+
+  btn.appendChild(abbrEl);
+  btn.appendChild(nameEl);
 
   btn.addEventListener('click', () => {
-    if (toggled.has(state)) {
-      toggled.delete(state);
+    if (toggled.has(abbr)) {
+      toggled.delete(abbr);
       btn.classList.remove('toggled');
       btn.setAttribute('aria-pressed', 'false');
     } else {
-      toggled.add(state);
+      toggled.add(abbr);
       btn.classList.add('toggled');
       btn.setAttribute('aria-pressed', 'true');
     }
@@ -62,13 +110,28 @@ STATES.forEach(state => {
   grid.appendChild(btn);
 });
 
+// ── Counter ───────────────────────────────────────────────────────────────────
+
 function updateCounter() {
-  counter.textContent = `${toggled.size} / 50`;
+  const n = toggled.size;
+  counter.textContent = `${n} / ${TOTAL}`;
+  percent.textContent = `${Math.round((n / TOTAL) * 100)}%`;
 }
 
 updateCounter();
 
-// Reset flow
+// ── Theme toggle ──────────────────────────────────────────────────────────────
+
+let currentTheme = getInitialTheme();
+applyTheme(currentTheme);
+
+themeBtn.addEventListener('click', () => {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  applyTheme(currentTheme);
+});
+
+// ── Reset flow ────────────────────────────────────────────────────────────────
+
 resetBtn.addEventListener('click', () => {
   overlay.hidden = false;
   modalConfirm.focus();
@@ -100,7 +163,8 @@ function closeModal() {
   resetBtn.focus();
 }
 
-// Register service worker
+// ── Service worker ────────────────────────────────────────────────────────────
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }

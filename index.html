@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#16213e" />
+  <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
   <title>AutoPlay - Road Trip Games</title>
@@ -13,10 +13,16 @@
   <header>
     <div class="header-left">
       <span class="app-name">AutoPlay</span>
-      <h1>50 States Tracker</h1>
-      <span id="counter">0 / 50</span>
+      <h1>License Plate Tracker</h1>
+      <div class="stats">
+        <span id="counter">0 / 50</span>
+        <span id="percent">0%</span>
+      </div>
     </div>
-    <button id="reset-btn" aria-label="Reset all states">Reset</button>
+    <div class="header-right">
+      <button id="theme-btn" aria-label="Toggle dark mode">🌙</button>
+      <button id="reset-btn" aria-label="Reset all plates">Reset</button>
+    </div>
   </header>
 
   <main id="grid"></main>
@@ -24,7 +30,7 @@
   <!-- Confirmation modal -->
   <div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
     <div id="modal">
-      <h2 id="modal-title">Reset all states?</h2>
+      <h2 id="modal-title">Reset all plates?</h2>
       <p>This will uncheck all 50 states. This cannot be undone.</p>
       <div class="modal-actions">
         <button id="modal-cancel">Cancel</button>
