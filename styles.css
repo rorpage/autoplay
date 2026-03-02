@@ -1,0 +1,230 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #1a1a2e;
+  --surface: #16213e;
+  --accent: #0f3460;
+  --toggled: #e94560;
+  --toggled-hover: #c73652;
+  --text: #eaeaea;
+  --text-muted: #8a8a9a;
+  --border: #2a2a4a;
+  --radius: 8px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.header-left {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+#counter {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+#reset-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+#reset-btn:hover {
+  color: var(--toggled);
+  border-color: var(--toggled);
+  background: rgba(233, 69, 96, 0.08);
+}
+
+/* ── Grid ── */
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── State buttons ── */
+.state-btn {
+  background: var(--accent);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  user-select: none;
+  letter-spacing: 0.01em;
+  position: relative;
+}
+
+.state-btn:hover {
+  background: #163a6a;
+  border-color: #3a3a6a;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.state-btn:active {
+  transform: scale(0.97);
+}
+
+.state-btn.toggled {
+  background: var(--toggled);
+  border-color: var(--toggled);
+  color: #fff;
+}
+
+.state-btn.toggled:hover {
+  background: var(--toggled-hover);
+  border-color: var(--toggled-hover);
+}
+
+.state-btn.toggled::after {
+  content: '✓';
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+/* ── Modal ── */
+#modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(3px);
+}
+
+#modal-overlay[hidden] {
+  display: none;
+}
+
+#modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  animation: pop-in 0.15s ease;
+}
+
+@keyframes pop-in {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+#modal h2 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+#modal p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  border-radius: var(--radius);
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+#modal-cancel {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+#modal-cancel:hover {
+  background: var(--accent);
+  color: var(--text);
+}
+
+#modal-confirm {
+  background: var(--toggled);
+  color: #fff;
+  border: 1px solid var(--toggled);
+}
+
+#modal-confirm:hover {
+  background: var(--toggled-hover);
+  border-color: var(--toggled-hover);
+}
+
+/* ── Focus styles ── */
+button:focus-visible {
+  outline: 2px solid var(--toggled);
+  outline-offset: 2px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  main {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    padding: 16px;
+    gap: 8px;
+  }
+
+  header {
+    padding: 12px 16px;
+  }
+}
