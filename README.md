@@ -8,19 +8,20 @@ Installable as a Progressive Web App (PWA) and works offline.
 
 ## Games
 
-### 50 States Tracker
+### License Plate Tracker
 
-Track which of the 50 US states you've visited (or know, or have been to — whatever your goal).
+Spot license plates from all 50 US states plus Washington D.C. on your road trip.
 
 **How to play:**
-- Click any state button to toggle it on.
-- Click it again to toggle it off.
+- Click any plate button to mark it as spotted.
+- Click it again to unmark it.
 - Your progress is saved automatically in `localStorage` and persists across sessions.
-- Use the **Reset** button in the top-right corner to clear all states. A confirmation prompt will appear before anything is wiped.
+- Use the **Reset** button in the top-right corner to clear all plates. A confirmation prompt will appear before anything is wiped.
 
 **Features:**
-- All 50 states displayed in a responsive grid
-- Live counter showing how many states are toggled (`X / 50`)
+- All 50 states + Washington D.C. (51 total) displayed as abbreviation buttons in a responsive grid
+- Live counter and percentage showing how many plates are spotted (`X / 51` and `XX%`)
+- Light and dark mode with a toggle button; respects system preference on first visit
 - Persistent state via `localStorage`
 - Confirmation modal on reset to prevent accidental data loss
 
