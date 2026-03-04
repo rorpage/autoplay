@@ -11,17 +11,19 @@
 <body>
 
   <header>
-    <div class="header-left">
+    <div class="header-top">
       <span class="app-name">AutoPlay</span>
-      <h1>License Plate Tracker</h1>
-      <div class="stats">
-        <span id="counter">0 / 50</span>
-        <span id="percent">0%</span>
+      <div class="header-actions">
+        <button id="theme-btn" aria-label="Toggle dark mode">🌙</button>
+        <button id="reset-btn" aria-label="Reset all plates">Reset</button>
       </div>
     </div>
-    <div class="header-right">
-      <button id="theme-btn" aria-label="Toggle dark mode">🌙</button>
-      <button id="reset-btn" aria-label="Reset all plates">Reset</button>
+    <div class="header-bottom">
+      <h1>License Plate Tracker</h1>
+      <div class="stats">
+        <span id="counter">0 / 51</span>
+        <span id="percent">0%</span>
+      </div>
     </div>
   </header>
 
@@ -38,6 +40,15 @@
       </div>
     </div>
   </div>
+
+  <nav class="bottom-nav" aria-label="Games">
+    <button class="nav-tab active" aria-current="page" aria-label="License Plates">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 30" fill="currentColor" aria-hidden="true">
+        <path d="M7,1 L22,1 L22,28 L2,26 L2,7 L7,7 Z"/>
+      </svg>
+      <span>License Plates</span>
+    </button>
+  </nav>
 
   <script src="app.js"></script>
 </body>

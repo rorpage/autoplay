@@ -46,27 +46,32 @@ header {
   top: 0;
   z-index: 10;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 20px 12px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   box-shadow: 0 2px 12px var(--shadow);
   transition: background 0.2s, border-color 0.2s;
 }
 
-.header-left {
+.header-top {
   display: flex;
-  align-items: baseline;
-  gap: 12px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.header-right {
+.header-bottom {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.header-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
 }
 
 .app-name {
@@ -134,6 +139,7 @@ main {
   grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
   gap: 8px;
   padding: 20px;
+  padding-bottom: 84px;
   max-width: 1000px;
   margin: 0 auto;
 }
@@ -292,16 +298,64 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+/* ── Bottom nav ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: stretch;
+  z-index: 10;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  transition: color 0.15s, background 0.15s;
+  padding: 8px;
+}
+
+.nav-tab:hover {
+  background: var(--accent-hover);
+  color: var(--text);
+}
+
+.nav-tab.active {
+  color: var(--toggled);
+}
+
+.nav-tab svg {
+  width: 20px;
+  height: 25px;
+}
+
 /* ── Responsive ── */
 @media (max-width: 480px) {
   main {
     grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
     padding: 12px;
+    padding-bottom: 84px;
     gap: 6px;
   }
 
   header {
-    padding: 10px 14px;
+    padding: 8px 14px 10px;
   }
 
   h1 {
