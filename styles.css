@@ -108,6 +108,12 @@ h1 {
 }
 
 /* ── Header buttons ── */
+#theme-btn svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
 #theme-btn,
 #reset-btn {
   background: transparent;
