@@ -1,0 +1,4 @@
+{
+  "buildCommand": "bash -c \"sed -i 's/__COMMIT_HASH__/'${VERCEL_GIT_COMMIT_SHA:0:7}'/g' sw.js\"",
+  "outputDirectory": "."
+}
