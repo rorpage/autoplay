@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>License Plate Tracker Tests</title>
+  <style>
+    body { font-family: monospace; padding: 1rem; background: #111; color: #eee; }
+    h1 { color: #fff; }
+    .pass { color: #4caf50; }
+    .fail { color: #f44336; }
+    .summary { margin-top: 1rem; font-size: 1.1em; font-weight: bold; }
+    #results { list-style: none; padding: 0; }
+    #results li { padding: 0.2rem 0; }
+  </style>
+</head>
+<body>
+  <h1>License Plate Tracker Tests</h1>
+  <ul id="results"></ul>
+  <p id="summary" class="summary"></p>
+
+  <!--
+    Provide the minimal DOM elements that app.js requires so it can
+    initialise without throwing reference errors.
+  -->
+  <span id="counter" style="display:none"></span>
+  <span id="percent"  style="display:none"></span>
+  <button id="reset-btn"  style="display:none"></button>
+  <button id="theme-btn"  style="display:none"></button>
+  <div    id="modal-overlay" hidden>
+    <button id="modal-cancel"></button>
+    <button id="modal-confirm"></button>
+  </div>
+  <main id="grid" style="display:none"></main>
+
+  <script src="app.js"></script>
+  <script>
+    // ── Minimal test runner ─────────────────────────────────────────────────
+    let passed = 0;
+    let failed = 0;
+    const results = document.getElementById('results');
+
+    function test(description, condition) {
+      const li = document.createElement('li');
+      if (condition) {
+        passed++;
+        li.className = 'pass';
+        li.textContent = '✓ ' + description;
+      } else {
+        failed++;
+        li.className = 'fail';
+        li.textContent = '✗ ' + description;
+      }
+      results.appendChild(li);
+    }
+
+    // ── Data integrity ──────────────────────────────────────────────────────
+
+    test('STATES contains 51 entries (50 US states + DC)',
+      STATES.length === 51);
+
+    test('PROVINCES contains 13 entries (10 provinces + 3 territories)',
+      PROVINCES.length === 13);
+
+    test('TOTAL_US equals STATES.length',
+      TOTAL_US === STATES.length);
+
+    test('TOTAL_CA equals PROVINCES.length',
+      TOTAL_CA === PROVINCES.length);
+
+    test('TOTAL equals TOTAL_US + TOTAL_CA (64)',
+      TOTAL === TOTAL_US + TOTAL_CA && TOTAL === 64);
+
+    // ── Every province has abbr and name ────────────────────────────────────
+
+    test('Every province entry has a non-empty abbr',
+      PROVINCES.every(p => typeof p.abbr === 'string' && p.abbr.length > 0));
+
+    test('Every province entry has a non-empty name',
+      PROVINCES.every(p => typeof p.name === 'string' && p.name.length > 0));
+
+    // ── Spot-check individual Canadian provinces / territories ──────────────
+
+    const provinceAbbrs = new Set(PROVINCES.map(p => p.abbr));
+    const provinceNames = new Set(PROVINCES.map(p => p.name));
+
+    test('Alberta (AB) is present',             provinceAbbrs.has('AB'));
+    test('British Columbia (BC) is present',    provinceAbbrs.has('BC'));
+    test('Manitoba (MB) is present',            provinceAbbrs.has('MB'));
+    test('New Brunswick (NB) is present',       provinceAbbrs.has('NB'));
+    test('Newfoundland and Labrador (NL) is present', provinceAbbrs.has('NL'));
+    test('Nova Scotia (NS) is present',         provinceAbbrs.has('NS'));
+    test('Northwest Territories (NT) is present', provinceAbbrs.has('NT'));
+    test('Nunavut (NU) is present',             provinceAbbrs.has('NU'));
+    test('Ontario (ON) is present',             provinceAbbrs.has('ON'));
+    test('Prince Edward Island (PE) is present', provinceAbbrs.has('PE'));
+    test('Quebec (QC) is present',              provinceAbbrs.has('QC'));
+    test('Saskatchewan (SK) is present',        provinceAbbrs.has('SK'));
+    test('Yukon (YT) is present',               provinceAbbrs.has('YT'));
+
+    // ── No duplicate abbreviations ──────────────────────────────────────────
+
+    test('All US state abbreviations are unique',
+      STATES.length === new Set(STATES.map(s => s.abbr)).size);
+
+    test('All Canadian province abbreviations are unique',
+      PROVINCES.length === provinceAbbrs.size);
+
+    test('No abbreviation appears in both STATES and PROVINCES',
+      STATES.every(s => !provinceAbbrs.has(s.abbr)));
+
+    // ── Counter reflects combined total ─────────────────────────────────────
+
+    test('Counter element shows X / 64 after initialisation',
+      document.getElementById('counter').textContent.endsWith('/ 64'));
+
+    // ── Grid sections are rendered ──────────────────────────────────────────
+
+    const headers = document.querySelectorAll('#grid .section-header');
+    test('Two section headers are rendered (US States + Canadian Provinces)',
+      headers.length === 2);
+
+    test('First section header reads "US States"',
+      headers[0] && headers[0].querySelector('.section-title').textContent === 'US States');
+
+    test('Second section header reads "Canadian Provinces"',
+      headers[1] && headers[1].querySelector('.section-title').textContent === 'Canadian Provinces');
+
+    const btns = document.querySelectorAll('#grid .state-btn');
+    test(`${TOTAL} plate buttons are rendered in the grid`,
+      btns.length === TOTAL);
+
+    // ── localStorage persistence ─────────────────────────────────────────────
+
+    test('loadSet returns an empty Set for a missing key',
+      loadSet('__test_missing__').size === 0);
+
+    test('saveSet / loadSet round-trip preserves values', (() => {
+      const key = '__test_roundtrip__';
+      const original = new Set(['AB', 'ON', 'QC']);
+      saveSet(key, original);
+      const loaded = loadSet(key);
+      localStorage.removeItem(key);
+      return loaded.size === 3 && loaded.has('AB') && loaded.has('ON') && loaded.has('QC');
+    })());
+
+    // ── Summary ──────────────────────────────────────────────────────────────
+
+    const summary = document.getElementById('summary');
+    summary.textContent = `${passed} passed, ${failed} failed`;
+    summary.className = 'summary ' + (failed === 0 ? 'pass' : 'fail');
+  </script>
+</body>
+</html>

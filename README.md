@@ -10,7 +10,7 @@ Installable as a Progressive Web App (PWA) and works offline.
 
 ### License Plate Tracker
 
-Spot license plates from all 50 US states plus Washington D.C. on your road trip.
+Spot license plates from all 50 US states plus Washington D.C., and all 13 Canadian provinces and territories, on your road trip.
 
 **How to play:**
 - Click any plate button to mark it as spotted.
@@ -19,8 +19,8 @@ Spot license plates from all 50 US states plus Washington D.C. on your road trip
 - Use the **Reset** button in the top-right corner to clear all plates. A confirmation prompt will appear before anything is wiped.
 
 **Features:**
-- All 50 states + Washington D.C. (51 total) displayed as abbreviation buttons in a responsive grid
-- Live counter and percentage showing how many plates are spotted (`X / 51` and `XX%`)
+- All 50 US states + Washington D.C. (51 total) and all 13 Canadian provinces and territories displayed as abbreviation buttons in a responsive grid, grouped into separate sections
+- Live counter and percentage showing how many plates are spotted (`X / 64` and `XX%`), with per-section sub-counts for US (`X / 51`) and Canada (`X / 13`)
 - Light and dark mode with a toggle button; respects system preference on first visit
 - Persistent state via `localStorage`
 - Confirmation modal on reset to prevent accidental data loss
