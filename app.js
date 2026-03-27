@@ -27,22 +27,35 @@ const STATES = [
   { abbr: 'WI', name: 'Wisconsin' },    { abbr: 'WY', name: 'Wyoming' }
 ];
 
-const PLATES_KEY = 'license-plate-toggled';
-const THEME_KEY  = 'autoplay-theme';
-const TOTAL      = STATES.length;
+const PROVINCES = [
+  { abbr: 'AB', name: 'Alberta' },         { abbr: 'BC', name: 'British Columbia' },
+  { abbr: 'MB', name: 'Manitoba' },        { abbr: 'NB', name: 'New Brunswick' },
+  { abbr: 'NL', name: 'Newfoundland and Labrador' }, { abbr: 'NS', name: 'Nova Scotia' },
+  { abbr: 'NT', name: 'Northwest Territories' },     { abbr: 'NU', name: 'Nunavut' },
+  { abbr: 'ON', name: 'Ontario' },         { abbr: 'PE', name: 'Prince Edward Island' },
+  { abbr: 'QC', name: 'Quebec' },          { abbr: 'SK', name: 'Saskatchewan' },
+  { abbr: 'YT', name: 'Yukon' }
+];
+
+const PLATES_KEY    = 'license-plate-toggled';
+const PROVINCES_KEY = 'license-plate-provinces-toggled';
+const THEME_KEY     = 'autoplay-theme';
+const TOTAL_US      = STATES.length;
+const TOTAL_CA      = PROVINCES.length;
+const TOTAL         = TOTAL_US + TOTAL_CA;
 
 // ── Persistence ──────────────────────────────────────────────────────────────
 
-function loadToggled() {
+function loadSet(key) {
   try {
-    return new Set(JSON.parse(localStorage.getItem(PLATES_KEY)) || []);
+    return new Set(JSON.parse(localStorage.getItem(key)) || []);
   } catch {
     return new Set();
   }
 }
 
-function saveToggled(set) {
-  localStorage.setItem(PLATES_KEY, JSON.stringify([...set]));
+function saveSet(key, set) {
+  localStorage.setItem(key, JSON.stringify([...set]));
 }
 
 // ── Theme ─────────────────────────────────────────────────────────────────────
@@ -78,7 +91,8 @@ function applyTheme(theme) {
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
-const toggled = loadToggled();
+const toggled          = loadSet(PLATES_KEY);
+const toggledProvinces = loadSet(PROVINCES_KEY);
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 
@@ -93,10 +107,11 @@ const modalConfirm= document.getElementById('modal-confirm');
 
 // ── Build grid ────────────────────────────────────────────────────────────────
 
-STATES.forEach(({ abbr, name }) => {
+function buildButton(region, toggledSet, storageKey) {
+  const { abbr, name } = region;
   const btn = document.createElement('button');
-  btn.className = 'state-btn' + (toggled.has(abbr) ? ' toggled' : '');
-  btn.setAttribute('aria-pressed', toggled.has(abbr).toString());
+  btn.className = 'state-btn' + (toggledSet.has(abbr) ? ' toggled' : '');
+  btn.setAttribute('aria-pressed', toggledSet.has(abbr).toString());
   btn.setAttribute('aria-label', name);
 
   const abbrEl = document.createElement('span');
@@ -111,28 +126,54 @@ STATES.forEach(({ abbr, name }) => {
   btn.appendChild(nameEl);
 
   btn.addEventListener('click', () => {
-    if (toggled.has(abbr)) {
-      toggled.delete(abbr);
+    if (toggledSet.has(abbr)) {
+      toggledSet.delete(abbr);
       btn.classList.remove('toggled');
       btn.setAttribute('aria-pressed', 'false');
     } else {
-      toggled.add(abbr);
+      toggledSet.add(abbr);
       btn.classList.add('toggled');
       btn.setAttribute('aria-pressed', 'true');
     }
-    saveToggled(toggled);
+    saveSet(storageKey, toggledSet);
     updateCounter();
   });
 
-  grid.appendChild(btn);
-});
+  return btn;
+}
+
+function buildSection(regions, toggledSet, storageKey, title, countId) {
+  const header = document.createElement('div');
+  header.className = 'section-header';
+
+  const titleEl = document.createElement('span');
+  titleEl.className = 'section-title';
+  titleEl.textContent = title;
+
+  const countEl = document.createElement('span');
+  countEl.className = 'section-count';
+  countEl.id = countId;
+
+  header.appendChild(titleEl);
+  header.appendChild(countEl);
+  grid.appendChild(header);
+
+  regions.forEach(region => grid.appendChild(buildButton(region, toggledSet, storageKey)));
+}
+
+buildSection(STATES, toggled, PLATES_KEY, 'US States', 'us-count');
+buildSection(PROVINCES, toggledProvinces, PROVINCES_KEY, 'Canadian Provinces', 'ca-count');
 
 // ── Counter ───────────────────────────────────────────────────────────────────
 
 function updateCounter() {
-  const n = toggled.size;
+  const usN = toggled.size;
+  const caN = toggledProvinces.size;
+  const n = usN + caN;
   counter.textContent = `${n} / ${TOTAL}`;
   percent.textContent = `${Math.round((n / TOTAL) * 100)}%`;
+  document.getElementById('us-count').textContent = `${usN} / ${TOTAL_US}`;
+  document.getElementById('ca-count').textContent = `${caN} / ${TOTAL_CA}`;
 }
 
 updateCounter();
@@ -166,7 +207,9 @@ document.addEventListener('keydown', e => {
 
 modalConfirm.addEventListener('click', () => {
   toggled.clear();
-  saveToggled(toggled);
+  toggledProvinces.clear();
+  saveSet(PLATES_KEY, toggled);
+  saveSet(PROVINCES_KEY, toggledProvinces);
   document.querySelectorAll('.state-btn.toggled').forEach(btn => {
     btn.classList.remove('toggled');
     btn.setAttribute('aria-pressed', 'false');
