@@ -18,16 +18,30 @@
         <button id="reset-btn" aria-label="Reset all plates">Reset</button>
       </div>
     </div>
-    <div class="header-bottom">
+    <div class="header-bottom" id="plates-header">
       <h1>License Plate Tracker</h1>
       <div class="stats">
         <span id="counter">0 / 64</span>
         <span id="percent">0%</span>
       </div>
     </div>
+    <div class="header-bottom" id="cow-header" hidden>
+      <h1>The Cow Game</h1>
+    </div>
+    <div class="header-bottom" id="sounds-header" hidden>
+      <h1>Sound Effects</h1>
+    </div>
   </header>
 
   <main id="grid"></main>
+
+  <div id="cow-page" class="placeholder-page" hidden>
+    <p>Coming soon…</p>
+  </div>
+
+  <div id="sounds-page" class="placeholder-page" hidden>
+    <p>Coming soon…</p>
+  </div>
 
   <!-- Confirmation modal -->
   <div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
@@ -42,9 +56,29 @@
   </div>
 
   <nav class="bottom-nav" aria-label="Games">
-    <button class="nav-tab active" aria-current="page" aria-label="License Plates">
+    <button class="nav-tab active" data-page="plates" aria-current="page" aria-label="License Plates">
       <img src="IN.svg" alt="" aria-hidden="true" class="nav-icon">
       <span>License Plates</span>
+    </button>
+    <button class="nav-tab" data-page="cow" aria-label="Cow Game">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="13" r="7"/>
+        <path d="M8 7c-1-3-4-3.5-4-2"/>
+        <path d="M16 7c1-3 4-3.5 4-2"/>
+        <ellipse cx="12" cy="16" rx="3" ry="2"/>
+        <circle cx="9.5" cy="11.5" r="1" fill="currentColor" stroke="none"/>
+        <circle cx="14.5" cy="11.5" r="1" fill="currentColor" stroke="none"/>
+        <circle cx="11" cy="16.2" r="0.5" fill="currentColor" stroke="none"/>
+        <circle cx="13" cy="16.2" r="0.5" fill="currentColor" stroke="none"/>
+      </svg>
+      <span>Cow Game</span>
+    </button>
+    <button class="nav-tab" data-page="sounds" aria-label="Sound Effects">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span>Sounds</span>
     </button>
   </nav>
 

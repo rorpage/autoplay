@@ -140,7 +140,7 @@ h1 {
 }
 
 /* ── Grid ── */
-main {
+main:not([hidden]) {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
   gap: 8px;
@@ -388,7 +388,7 @@ button:focus-visible {
 
 /* ── Responsive ── */
 @media (max-width: 480px) {
-  main {
+  main:not([hidden]) {
     grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
     padding: 12px;
     padding-bottom: 84px;
@@ -402,4 +402,21 @@ button:focus-visible {
   h1 {
     font-size: 1rem;
   }
+}
+
+/* ── Placeholder pages ── */
+.placeholder-page:not([hidden]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 40px 20px 84px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* ── SVG nav icons ── */
+svg.nav-icon {
+  width: 28px;
+  height: 28px;
 }
