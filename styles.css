@@ -61,7 +61,7 @@ header {
   justify-content: space-between;
 }
 
-.header-bottom {
+.header-bottom:not([hidden]) {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
