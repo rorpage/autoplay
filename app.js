@@ -223,6 +223,44 @@ function closeModal() {
   resetBtn.focus();
 }
 
+// ── Page navigation ────────────────────────────────────────────────────────────
+
+const platesHeader = document.getElementById('plates-header');
+const cowHeader    = document.getElementById('cow-header');
+const soundsHeader = document.getElementById('sounds-header');
+const cowPage      = document.getElementById('cow-page');
+const soundsPage   = document.getElementById('sounds-page');
+const navTabs      = document.querySelectorAll('.nav-tab');
+
+navTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const pageId = tab.dataset.page;
+
+    navTabs.forEach(t => {
+      t.classList.remove('active');
+      t.removeAttribute('aria-current');
+    });
+    tab.classList.add('active');
+    tab.setAttribute('aria-current', 'page');
+
+    const isPlates = pageId === 'plates';
+    const isCow    = pageId === 'cow';
+    const isSounds = pageId === 'sounds';
+
+    grid.hidden         = !isPlates;
+    cowPage.hidden      = !isCow;
+    soundsPage.hidden   = !isSounds;
+
+    platesHeader.hidden = !isPlates;
+    cowHeader.hidden    = !isCow;
+    soundsHeader.hidden = !isSounds;
+
+    resetBtn.hidden = !isPlates;
+
+    if (!isPlates && !overlay.hidden) closeModal();
+  });
+});
+
 // ── Service worker ────────────────────────────────────────────────────────────
 
 if ('serviceWorker' in navigator) {

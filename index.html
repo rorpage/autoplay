@@ -18,16 +18,30 @@
         <button id="reset-btn" aria-label="Reset all plates">Reset</button>
       </div>
     </div>
-    <div class="header-bottom">
+    <div class="header-bottom" id="plates-header">
       <h1>License Plate Tracker</h1>
       <div class="stats">
         <span id="counter">0 / 64</span>
         <span id="percent">0%</span>
       </div>
     </div>
+    <div class="header-bottom" id="cow-header" hidden>
+      <h1>The Cow Game</h1>
+    </div>
+    <div class="header-bottom" id="sounds-header" hidden>
+      <h1>Sound Effects</h1>
+    </div>
   </header>
 
   <main id="grid"></main>
+
+  <div id="cow-page" class="placeholder-page" hidden>
+    <p>Coming soon…</p>
+  </div>
+
+  <div id="sounds-page" class="placeholder-page" hidden>
+    <p>Coming soon…</p>
+  </div>
 
   <!-- Confirmation modal -->
   <div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
@@ -42,9 +56,17 @@
   </div>
 
   <nav class="bottom-nav" aria-label="Games">
-    <button class="nav-tab active" aria-current="page" aria-label="License Plates">
-      <img src="IN.svg" alt="" aria-hidden="true" class="nav-icon">
+    <button class="nav-tab active" data-page="plates" aria-current="page" aria-label="License Plates">
+      <img src="automobile.svg" alt="" aria-hidden="true" class="nav-icon">
       <span>License Plates</span>
+    </button>
+    <button class="nav-tab" data-page="cow" aria-label="Cow Game">
+      <img src="cow-face.svg" alt="" aria-hidden="true" class="nav-icon">
+      <span>Cow Game</span>
+    </button>
+    <button class="nav-tab" data-page="sounds" aria-label="Sound Effects">
+      <img src="speaker.svg" alt="" aria-hidden="true" class="nav-icon">
+      <span>Sound Effects</span>
     </button>
   </nav>
 
