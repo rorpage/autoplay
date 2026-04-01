@@ -235,12 +235,13 @@ function closeModal() {
 
 // ── Page navigation ────────────────────────────────────────────────────────────
 
-const platesHeader = document.getElementById('plates-header');
-const cowHeader    = document.getElementById('cow-header');
-const soundsHeader = document.getElementById('sounds-header');
-const cowPage      = document.getElementById('cow-page');
-const soundsPage   = document.getElementById('sounds-page');
-const navTabs      = document.querySelectorAll('.nav-tab');
+const platesHeader   = document.getElementById('plates-header');
+const cowHeader      = document.getElementById('cow-header');
+const soundsHeader   = document.getElementById('sounds-header');
+const cowPage        = document.getElementById('cow-page');
+const cowInstructions= document.getElementById('cow-instructions');
+const soundsPage     = document.getElementById('sounds-page');
+const navTabs        = document.querySelectorAll('.nav-tab');
 
 navTabs.forEach(tab => {
   tab.addEventListener('click', () => {
@@ -257,9 +258,10 @@ navTabs.forEach(tab => {
     const isCow    = pageId === 'cow';
     const isSounds = pageId === 'sounds';
 
-    grid.hidden         = !isPlates;
-    cowPage.hidden      = !isCow;
-    soundsPage.hidden   = !isSounds;
+    grid.hidden              = !isPlates;
+    cowPage.hidden           = !isCow;
+    cowInstructions.hidden   = !isCow;
+    soundsPage.hidden        = !isSounds;
 
     platesHeader.hidden = !isPlates;
     cowHeader.hidden    = !isCow;

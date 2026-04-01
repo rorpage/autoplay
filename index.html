@@ -36,7 +36,6 @@
   <main id="grid"></main>
 
   <div id="cow-page" hidden>
-    <p class="cow-instructions">🐄 Spot a cow out the window? Tap <strong>+</strong> for your team! First to moo-ve past the other team wins. Press and hold the reset button to clear a score.</p>
     <div class="cow-scores">
       <div class="score-box">
         <div class="score-team-name" contenteditable="true" role="textbox" spellcheck="false" data-team="1" aria-label="Team 1 name"></div>
@@ -74,6 +73,8 @@
       </div>
     </div>
   </div>
+
+  <p id="cow-instructions" hidden>Spot a cow out the window? Tap <strong>+</strong> for your team!<br>Not a cow, but a goat or other animal? Tap <strong>−</strong>!<br>See a cemetery? Press and hold the other team's tombstone to reset their score.<br>Most importantly: have fun! 🐄</p>
 
   <nav class="bottom-nav" aria-label="Games">
     <button class="nav-tab active" data-page="plates" aria-current="page" aria-label="License Plates">

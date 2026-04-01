@@ -421,18 +421,25 @@ button:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 24px 16px 84px;
+  padding: 24px 16px 180px;
   min-height: calc(100vh - 120px);
-  gap: 20px;
 }
 
-.cow-instructions {
-  max-width: 500px;
-  width: 100%;
-  font-size: 0.88rem;
+#cow-instructions:not([hidden]) {
+  display: block;
+  position: fixed;
+  bottom: 64px;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 10px 20px;
+  font-size: 0.8rem;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.6;
   text-align: center;
+  z-index: 9;
+  transition: background 0.2s, border-color 0.2s;
 }
 
 .cow-scores {
