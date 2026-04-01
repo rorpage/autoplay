@@ -415,7 +415,7 @@ button:focus-visible {
   font-size: 0.95rem;
 }
 
-/* ── Cow Game ── */
+/* ── My Cows ── */
 #cow-page:not([hidden]) {
   display: flex;
   align-items: flex-start;
