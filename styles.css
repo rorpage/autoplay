@@ -436,9 +436,13 @@ button:focus-visible {
   color: var(--text-muted);
   line-height: 1.6;
   text-align: left;
-  list-style: disc;
-  padding-left: 40px;
+  list-style: none;
+  padding-left: 20px;
   z-index: 9;
+}
+
+#cow-instructions:not([hidden]) li::before {
+  content: "- ";
 }
 
 .cow-scores {
