@@ -25,6 +25,20 @@ Spot license plates from all 50 US states plus Washington D.C., and all 13 Canad
 - Persistent state via `localStorage`
 - Confirmation modal on reset to prevent accidental data loss
 
+### The Cow Game
+
+A two-team score tracker for the classic road trip game where you earn points by spotting cows on your side of the road.
+
+**How to play:**
+- Tap **+** to add a point for a team, and **−** to remove one (scores can't go below 0).
+- Tap a team's name to rename it; press Enter or tap away to save.
+- Hold the **🪦** button for ~0.8 seconds to reset that team's score to zero.
+- Scores and team names are saved automatically in `localStorage` and persist across sessions.
+
+**Features:**
+- Two teams with editable names
+- Persistent state via `localStorage`
+
 ---
 
 ## Running locally
