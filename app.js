@@ -265,45 +265,58 @@ navTabs.forEach(tab => {
 
 const COW_SCORES_KEY = 'cow-game-scores';
 
-function loadCowScores() {
+const DEFAULT_TEAMS = [
+  { score: 0, name: 'Team 1' },
+  { score: 0, name: 'Team 2' },
+];
+
+function loadCowData() {
   try {
     const data = JSON.parse(localStorage.getItem(COW_SCORES_KEY));
-    if (data && typeof data.team1 === 'number' && typeof data.team2 === 'number') {
+    if (data && Array.isArray(data.teams) && data.teams.length >= 2) {
       return {
-        team1: data.team1,
-        team2: data.team2,
-        name1: (typeof data.name1 === 'string' && data.name1.trim()) ? data.name1 : 'Team 1',
-        name2: (typeof data.name2 === 'string' && data.name2.trim()) ? data.name2 : 'Team 2',
+        teams: data.teams.map((t, i) => ({
+          score: typeof t.score === 'number' ? t.score : 0,
+          name: (typeof t.name === 'string' && t.name.trim()) ? t.name : DEFAULT_TEAMS[i]?.name ?? `Team ${i + 1}`,
+        })),
       };
     }
   } catch {
     // fall through
   }
-  return { team1: 0, team2: 0, name1: 'Team 1', name2: 'Team 2' };
+  return { teams: DEFAULT_TEAMS.map(t => ({ ...t })) };
 }
 
-function saveCowScores() {
-  localStorage.setItem(COW_SCORES_KEY, JSON.stringify(cowScores));
+function saveCowData() {
+  localStorage.setItem(COW_SCORES_KEY, JSON.stringify(cowData));
 }
 
-const cowScores = loadCowScores();
-const scoreTeam1El  = document.getElementById('score-team1');
-const scoreTeam2El  = document.getElementById('score-team2');
-const nameTeam1El   = document.querySelector('.score-team-name[data-team="1"]');
-const nameTeam2El   = document.querySelector('.score-team-name[data-team="2"]');
-const resetTeam1Btn = document.querySelector('.score-reset[data-team="1"]');
-const resetTeam2Btn = document.querySelector('.score-reset[data-team="2"]');
+const cowData = loadCowData();
+
+function teamIndex(el) {
+  const idx = parseInt(el?.dataset?.team, 10) - 1;
+  return Number.isFinite(idx) ? idx : -1;
+}
 
 function renderCowScores() {
-  scoreTeam1El.textContent = cowScores.team1;
-  scoreTeam2El.textContent = cowScores.team2;
+  document.querySelectorAll('.score-box').forEach(box => {
+    const nameEl = box.querySelector('.score-team-name[data-team]');
+    if (!nameEl) return;
+    const idx = teamIndex(nameEl);
+    if (idx < 0 || idx >= cowData.teams.length) return;
+    box.querySelector('.score-value').textContent = cowData.teams[idx].score;
+  });
 }
 
 function renderCowNames() {
-  nameTeam1El.textContent = cowScores.name1;
-  nameTeam2El.textContent = cowScores.name2;
-  resetTeam1Btn.setAttribute('aria-label', `Hold to reset ${cowScores.name1} score`);
-  resetTeam2Btn.setAttribute('aria-label', `Hold to reset ${cowScores.name2} score`);
+  document.querySelectorAll('.score-team-name[data-team]').forEach(el => {
+    const team = cowData.teams[teamIndex(el)];
+    el.textContent = team.name;
+  });
+  document.querySelectorAll('.score-reset[data-team]').forEach(btn => {
+    const team = cowData.teams[teamIndex(btn)];
+    btn.setAttribute('aria-label', `Hold to reset ${team.name} score`);
+  });
 }
 
 renderCowScores();
@@ -311,9 +324,9 @@ renderCowNames();
 
 // ── Team name editing ──────────────────────────────────────────────────────────
 
-[nameTeam1El, nameTeam2El].forEach(el => {
-  const nameKey  = el.dataset.team === '1' ? 'name1' : 'name2';
-  const fallback = el.dataset.team === '1' ? 'Team 1' : 'Team 2';
+document.querySelectorAll('.score-team-name[data-team]').forEach(el => {
+  const idx      = teamIndex(el);
+  const fallback = DEFAULT_TEAMS[idx]?.name ?? `Team ${idx + 1}`;
 
   el.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
@@ -331,34 +344,41 @@ renderCowNames();
 
   el.addEventListener('blur', () => {
     const text = el.textContent.trim();
-    cowScores[nameKey] = text || fallback;
-    saveCowScores();
+    cowData.teams[idx].name = text || fallback;
+    saveCowData();
     renderCowNames();
   });
 });
 
+// ── Score controls ────────────────────────────────────────────────────────────
+
 document.querySelectorAll('.score-box').forEach(box => {
-  const team = box.querySelector('.score-reset').dataset.team === '1' ? 'team1' : 'team2';
+  const nameEl = box.querySelector('.score-team-name[data-team]');
+  if (!nameEl) return;
+  const idx = teamIndex(nameEl);
+  if (idx < 0 || idx >= cowData.teams.length) return;
 
   box.querySelector('.score-minus').addEventListener('click', () => {
-    if (cowScores[team] > 0) {
-      cowScores[team]--;
-      saveCowScores();
+    if (cowData.teams[idx].score > 0) {
+      cowData.teams[idx].score--;
+      saveCowData();
       renderCowScores();
     }
   });
 
   box.querySelector('.score-plus').addEventListener('click', () => {
-    cowScores[team]++;
-    saveCowScores();
+    cowData.teams[idx].score++;
+    saveCowData();
     renderCowScores();
   });
 });
 
+// ── Long-press reset ──────────────────────────────────────────────────────────
+
 const HOLD_MS = 800;
 
 document.querySelectorAll('.score-reset').forEach(btn => {
-  const team = btn.dataset.team === '1' ? 'team1' : 'team2';
+  const idx = teamIndex(btn);
   let holdTimer = null;
 
   function startHold(e) {
@@ -366,8 +386,8 @@ document.querySelectorAll('.score-reset').forEach(btn => {
     clearTimeout(holdTimer);
     btn.classList.add('holding');
     holdTimer = setTimeout(() => {
-      cowScores[team] = 0;
-      saveCowScores();
+      cowData.teams[idx].score = 0;
+      saveCowData();
       renderCowScores();
       btn.classList.remove('holding');
     }, HOLD_MS);
