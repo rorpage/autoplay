@@ -105,6 +105,14 @@ const overlay     = document.getElementById('modal-overlay');
 const modalCancel = document.getElementById('modal-cancel');
 const modalConfirm= document.getElementById('modal-confirm');
 
+const modalBgElements = [
+  document.querySelector('header'),
+  grid,
+  document.getElementById('cow-page'),
+  document.getElementById('sounds-page'),
+  document.querySelector('.bottom-nav'),
+];
+
 // ── Build grid ────────────────────────────────────────────────────────────────
 
 function buildButton(region, toggledSet, storageKey) {
@@ -192,6 +200,7 @@ themeBtn.addEventListener('click', () => {
 
 resetBtn.addEventListener('click', () => {
   overlay.hidden = false;
+  modalBgElements.forEach(el => el?.setAttribute('inert', ''));
   modalConfirm.focus();
 });
 
@@ -220,6 +229,7 @@ modalConfirm.addEventListener('click', () => {
 
 function closeModal() {
   overlay.hidden = true;
+  modalBgElements.forEach(el => el?.removeAttribute('inert'));
   resetBtn.focus();
 }
 
