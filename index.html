@@ -35,8 +35,27 @@
 
   <main id="grid"></main>
 
-  <div id="cow-page" class="placeholder-page" hidden>
-    <p>Coming soon…</p>
+  <div id="cow-page" hidden>
+    <div class="cow-scores">
+      <div class="score-box">
+        <div class="score-team-name">Team 1</div>
+        <div class="score-controls">
+          <button class="score-btn score-minus" aria-label="Decrease Team 1 score">−</button>
+          <span class="score-value" id="score-team1">0</span>
+          <button class="score-btn score-plus" aria-label="Increase Team 1 score">+</button>
+        </div>
+        <button class="score-reset" data-team="1" aria-label="Hold to reset Team 1 score"><span>🪦</span></button>
+      </div>
+      <div class="score-box">
+        <div class="score-team-name">Team 2</div>
+        <div class="score-controls">
+          <button class="score-btn score-minus" aria-label="Decrease Team 2 score">−</button>
+          <span class="score-value" id="score-team2">0</span>
+          <button class="score-btn score-plus" aria-label="Increase Team 2 score">+</button>
+        </div>
+        <button class="score-reset" data-team="2" aria-label="Hold to reset Team 2 score"><span>🪦</span></button>
+      </div>
+    </div>
   </div>
 
   <div id="sounds-page" class="placeholder-page" hidden>

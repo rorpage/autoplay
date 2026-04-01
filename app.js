@@ -261,6 +261,87 @@ navTabs.forEach(tab => {
   });
 });
 
+// ── Cow Game ──────────────────────────────────────────────────────────────────
+
+const COW_SCORES_KEY = 'cow-game-scores';
+
+function loadCowScores() {
+  try {
+    const data = JSON.parse(localStorage.getItem(COW_SCORES_KEY));
+    if (data && typeof data.team1 === 'number' && typeof data.team2 === 'number') {
+      return data;
+    }
+  } catch {
+    // fall through
+  }
+  return { team1: 0, team2: 0 };
+}
+
+function saveCowScores() {
+  localStorage.setItem(COW_SCORES_KEY, JSON.stringify(cowScores));
+}
+
+const cowScores = loadCowScores();
+const scoreTeam1El = document.getElementById('score-team1');
+const scoreTeam2El = document.getElementById('score-team2');
+
+function renderCowScores() {
+  scoreTeam1El.textContent = cowScores.team1;
+  scoreTeam2El.textContent = cowScores.team2;
+}
+
+renderCowScores();
+
+document.querySelectorAll('.score-box').forEach(box => {
+  const team = box.querySelector('.score-reset').dataset.team === '1' ? 'team1' : 'team2';
+
+  box.querySelector('.score-minus').addEventListener('click', () => {
+    if (cowScores[team] > 0) {
+      cowScores[team]--;
+      saveCowScores();
+      renderCowScores();
+    }
+  });
+
+  box.querySelector('.score-plus').addEventListener('click', () => {
+    cowScores[team]++;
+    saveCowScores();
+    renderCowScores();
+  });
+});
+
+const HOLD_MS = 800;
+
+document.querySelectorAll('.score-reset').forEach(btn => {
+  const team = btn.dataset.team === '1' ? 'team1' : 'team2';
+  let holdTimer = null;
+
+  function startHold(e) {
+    e.preventDefault();
+    clearTimeout(holdTimer);
+    btn.classList.add('holding');
+    holdTimer = setTimeout(() => {
+      cowScores[team] = 0;
+      saveCowScores();
+      renderCowScores();
+      btn.classList.remove('holding');
+    }, HOLD_MS);
+  }
+
+  function cancelHold() {
+    clearTimeout(holdTimer);
+    btn.classList.remove('holding');
+  }
+
+  btn.addEventListener('mousedown', startHold);
+  btn.addEventListener('touchstart', startHold, { passive: false });
+  btn.addEventListener('mouseup', cancelHold);
+  btn.addEventListener('mouseleave', cancelHold);
+  btn.addEventListener('touchend', cancelHold);
+  btn.addEventListener('touchcancel', cancelHold);
+  btn.addEventListener('contextmenu', e => e.preventDefault());
+});
+
 // ── Service worker ────────────────────────────────────────────────────────────
 
 if ('serviceWorker' in navigator) {
