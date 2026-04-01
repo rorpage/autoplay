@@ -269,12 +269,17 @@ function loadCowScores() {
   try {
     const data = JSON.parse(localStorage.getItem(COW_SCORES_KEY));
     if (data && typeof data.team1 === 'number' && typeof data.team2 === 'number') {
-      return data;
+      return {
+        team1: data.team1,
+        team2: data.team2,
+        name1: (typeof data.name1 === 'string' && data.name1.trim()) ? data.name1 : 'Team 1',
+        name2: (typeof data.name2 === 'string' && data.name2.trim()) ? data.name2 : 'Team 2',
+      };
     }
   } catch {
     // fall through
   }
-  return { team1: 0, team2: 0 };
+  return { team1: 0, team2: 0, name1: 'Team 1', name2: 'Team 2' };
 }
 
 function saveCowScores() {
@@ -282,15 +287,55 @@ function saveCowScores() {
 }
 
 const cowScores = loadCowScores();
-const scoreTeam1El = document.getElementById('score-team1');
-const scoreTeam2El = document.getElementById('score-team2');
+const scoreTeam1El  = document.getElementById('score-team1');
+const scoreTeam2El  = document.getElementById('score-team2');
+const nameTeam1El   = document.querySelector('.score-team-name[data-team="1"]');
+const nameTeam2El   = document.querySelector('.score-team-name[data-team="2"]');
+const resetTeam1Btn = document.querySelector('.score-reset[data-team="1"]');
+const resetTeam2Btn = document.querySelector('.score-reset[data-team="2"]');
 
 function renderCowScores() {
   scoreTeam1El.textContent = cowScores.team1;
   scoreTeam2El.textContent = cowScores.team2;
 }
 
+function renderCowNames() {
+  nameTeam1El.textContent = cowScores.name1;
+  nameTeam2El.textContent = cowScores.name2;
+  resetTeam1Btn.setAttribute('aria-label', `Hold to reset ${cowScores.name1} score`);
+  resetTeam2Btn.setAttribute('aria-label', `Hold to reset ${cowScores.name2} score`);
+}
+
 renderCowScores();
+renderCowNames();
+
+// ── Team name editing ──────────────────────────────────────────────────────────
+
+[nameTeam1El, nameTeam2El].forEach(el => {
+  const nameKey  = el.dataset.team === '1' ? 'name1' : 'name2';
+  const fallback = el.dataset.team === '1' ? 'Team 1' : 'Team 2';
+
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+  });
+
+  el.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
+    sel.deleteFromDocument();
+    sel.getRangeAt(0).insertNode(document.createTextNode(text));
+    sel.collapseToEnd();
+  });
+
+  el.addEventListener('blur', () => {
+    const text = el.textContent.trim();
+    cowScores[nameKey] = text || fallback;
+    saveCowScores();
+    renderCowNames();
+  });
+});
 
 document.querySelectorAll('.score-box').forEach(box => {
   const team = box.querySelector('.score-reset').dataset.team === '1' ? 'team1' : 'team2';
