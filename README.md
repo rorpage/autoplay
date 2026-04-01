@@ -25,7 +25,7 @@ Spot license plates from all 50 US states plus Washington D.C., and all 13 Canad
 - Persistent state via `localStorage`
 - Confirmation modal on reset to prevent accidental data loss
 
-### The Cow Game
+### My Cows
 
 A two-team score tracker for the classic road trip game where you earn points by spotting cows on your side of the road.
 
