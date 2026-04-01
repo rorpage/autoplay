@@ -261,6 +261,152 @@ navTabs.forEach(tab => {
   });
 });
 
+// ── Cow Game ──────────────────────────────────────────────────────────────────
+
+const COW_SCORES_KEY = 'cow-game-scores';
+
+const DEFAULT_TEAMS = [
+  { score: 0, name: 'Team 1' },
+  { score: 0, name: 'Team 2' },
+];
+
+function loadCowData() {
+  try {
+    const data = JSON.parse(localStorage.getItem(COW_SCORES_KEY));
+    if (data && Array.isArray(data.teams) && data.teams.length >= 2) {
+      return {
+        teams: data.teams.map((t, i) => ({
+          score: typeof t.score === 'number' ? t.score : 0,
+          name: (typeof t.name === 'string' && t.name.trim()) ? t.name : DEFAULT_TEAMS[i]?.name ?? `Team ${i + 1}`,
+        })),
+      };
+    }
+  } catch {
+    // fall through
+  }
+  return { teams: DEFAULT_TEAMS.map(t => ({ ...t })) };
+}
+
+function saveCowData() {
+  localStorage.setItem(COW_SCORES_KEY, JSON.stringify(cowData));
+}
+
+const cowData = loadCowData();
+
+function teamIndex(el) {
+  const idx = parseInt(el?.dataset?.team, 10) - 1;
+  return Number.isFinite(idx) ? idx : -1;
+}
+
+function renderCowScores() {
+  document.querySelectorAll('.score-box').forEach(box => {
+    const nameEl = box.querySelector('.score-team-name[data-team]');
+    if (!nameEl) return;
+    const idx = teamIndex(nameEl);
+    if (idx < 0 || idx >= cowData.teams.length) return;
+    box.querySelector('.score-value').textContent = cowData.teams[idx].score;
+  });
+}
+
+function renderCowNames() {
+  document.querySelectorAll('.score-team-name[data-team]').forEach(el => {
+    const team = cowData.teams[teamIndex(el)];
+    el.textContent = team.name;
+  });
+  document.querySelectorAll('.score-reset[data-team]').forEach(btn => {
+    const team = cowData.teams[teamIndex(btn)];
+    btn.setAttribute('aria-label', `Hold to reset ${team.name} score`);
+  });
+}
+
+renderCowScores();
+renderCowNames();
+
+// ── Team name editing ──────────────────────────────────────────────────────────
+
+document.querySelectorAll('.score-team-name[data-team]').forEach(el => {
+  const idx      = teamIndex(el);
+  const fallback = DEFAULT_TEAMS[idx]?.name ?? `Team ${idx + 1}`;
+
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+  });
+
+  el.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
+    sel.deleteFromDocument();
+    sel.getRangeAt(0).insertNode(document.createTextNode(text));
+    sel.collapseToEnd();
+  });
+
+  el.addEventListener('blur', () => {
+    const text = el.textContent.trim();
+    cowData.teams[idx].name = text || fallback;
+    saveCowData();
+    renderCowNames();
+  });
+});
+
+// ── Score controls ────────────────────────────────────────────────────────────
+
+document.querySelectorAll('.score-box').forEach(box => {
+  const nameEl = box.querySelector('.score-team-name[data-team]');
+  if (!nameEl) return;
+  const idx = teamIndex(nameEl);
+  if (idx < 0 || idx >= cowData.teams.length) return;
+
+  box.querySelector('.score-minus').addEventListener('click', () => {
+    if (cowData.teams[idx].score > 0) {
+      cowData.teams[idx].score--;
+      saveCowData();
+      renderCowScores();
+    }
+  });
+
+  box.querySelector('.score-plus').addEventListener('click', () => {
+    cowData.teams[idx].score++;
+    saveCowData();
+    renderCowScores();
+  });
+});
+
+// ── Long-press reset ──────────────────────────────────────────────────────────
+
+const HOLD_MS = 800;
+
+document.querySelectorAll('.score-reset').forEach(btn => {
+  const idx = teamIndex(btn);
+  let holdTimer = null;
+
+  function startHold(e) {
+    e.preventDefault();
+    clearTimeout(holdTimer);
+    btn.classList.add('holding');
+    holdTimer = setTimeout(() => {
+      cowData.teams[idx].score = 0;
+      saveCowData();
+      renderCowScores();
+      btn.classList.remove('holding');
+    }, HOLD_MS);
+  }
+
+  function cancelHold() {
+    clearTimeout(holdTimer);
+    btn.classList.remove('holding');
+  }
+
+  btn.addEventListener('mousedown', startHold);
+  btn.addEventListener('touchstart', startHold, { passive: false });
+  btn.addEventListener('mouseup', cancelHold);
+  btn.addEventListener('mouseleave', cancelHold);
+  btn.addEventListener('touchend', cancelHold);
+  btn.addEventListener('touchcancel', cancelHold);
+  btn.addEventListener('contextmenu', e => e.preventDefault());
+});
+
 // ── Service worker ────────────────────────────────────────────────────────────
 
 if ('serviceWorker' in navigator) {
