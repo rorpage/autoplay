@@ -433,7 +433,7 @@ button:focus-visible {
   right: 0;
   padding: 10px 20px;
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: white;
   line-height: 1.6;
   text-align: left;
   list-style: none;
